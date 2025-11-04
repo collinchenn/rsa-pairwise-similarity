@@ -1,0 +1,11 @@
+numpy
+scipy
+pandas
+torch
+transformer-lens
+einops
+fancy-einsum
+jaxtyping
+tqdm
+plotly
+circuitsvis
