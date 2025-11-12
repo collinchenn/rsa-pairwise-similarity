@@ -1,0 +1,15 @@
+pine redwood 4.0
+pine oak 3.5
+pine maple 3.5
+pine birch 3.6
+pine willow 2.8
+redwood oak 6.4
+redwood maple 3.3
+redwood birch 2.6
+redwood willow 3.9
+oak maple 4.9
+oak birch 3.7
+oak willow 3.5
+maple birch 5.1
+maple willow 4.2
+birch willow 5.5
