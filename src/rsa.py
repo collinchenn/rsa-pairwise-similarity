@@ -5,7 +5,7 @@ Usage:
     from rsa import RSA
 
     rsa = RSA(model)
-    rsa_scores, top_list = rsa.run("data/pairs.txt", top_k=50)
+    rsa_scores, rsa_pvalues = rsa.run("data/pairs.txt")
 """
 
 
