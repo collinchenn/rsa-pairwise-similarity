@@ -33,7 +33,7 @@ class RSA:
 
     # --------------------------- Public Interface ---------------------------
 
-    def run(self, file_name: str, top_k: int = 50):
+    def run(self, file_name: str):
         """
         Full RSA pipeline for a single human similarity file.
 
@@ -49,11 +49,10 @@ class RSA:
                        word1#id1   word2#id2   similarity_score
                        or simply,
                        word1       word2       similarity_score
-            top_k: Number of top hooks (by r-value) to return
 
         Returns:
             rsa_scores: dict {hook_tag -> r}
-            top_k_list: list of (hook_tag, r) sorted by descending r-value
+            rsa_pvalues: dict {hook_tag -> p}
         """
         # 1. Read human similarities
         pair_similarities = self._read_pair_similarities(file_name)
@@ -78,13 +77,12 @@ class RSA:
         )
 
         # 6. Compute RSA scores
-        rsa_scores, top_list = self._compute_rsa(
+        rsa_scores, rsa_pvalues = self._compute_rsa(
             cosine_by_hook=cosine_by_hook,
             human_vec=human_vec,
-            top_k=top_k,
         )
 
-        return rsa_scores, top_list
+        return rsa_scores, rsa_pvalues
 
     # -------------------------- Private interface --------------------------
 
@@ -200,7 +198,6 @@ class RSA:
         self,
         cosine_by_hook: Dict[str, np.ndarray],
         human_vec: np.ndarray,
-        top_k: int = 50,
     ) -> Tuple[Dict[str, float], List[Tuple[str, float]]]:
         """
         Compute RSA scores (Pearson r) for each hook
@@ -208,22 +205,17 @@ class RSA:
         Args:
             cosine_by_hook: {hook_tag -> machine similarity vector}
             human_vec: numpy array of human similarities (aligned with pairs)
-            top_k: number of top hooks to return/print
 
         Returns:
             rsa_scores: full dict {hook_tag -> r}
-            top_k_list: list of (hook_tag, r) sorted by r (desc)
+            rsa_pvalues: full dict {hook_tag -> p}
         """
         rsa_scores: Dict[str, float] = {}
+        rsa_pvalues: Dict[str, float] = {}
 
         for hook, machine_vec in cosine_by_hook.items():
-            r, _ = pearsonr(machine_vec, human_vec)
+            r, p = pearsonr(machine_vec, human_vec)
             rsa_scores[hook] = r
+            rsa_pvalues[hook] = p
 
-        top_k_list = sorted(
-            rsa_scores.items(),
-            key=lambda x: x[1],
-            reverse=True
-        )[:top_k]
-
-        return rsa_scores, top_k_list
+        return (rsa_scores, rsa_pvalues)
